@@ -40,4 +40,18 @@ io.on("connection", (socket) => {
         io.to(room).emit("startGame", "Game starting! Make your choice!");
         waitingPlayer = null;
     }
-})
+
+    socket.on("disconnect", () => {
+        console.log(`Player disconnected from ${socket.id}`);
+
+        if (players[socket.id]) {
+            const opponentId = players[socket.id].opponent;
+            if (opponentId && players[opponentId]) {
+                io.to(players[socket.id].room).emit("opponentLeft", "Opponent left the game");
+                delete players[opponentId];
+            }
+            delete players[socket.id];
+        }
+    });
+});
+
