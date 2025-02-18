@@ -1,38 +1,36 @@
 document.addEventListener("DOMContentLoaded", () => {
+    const socket = io(); // Connect to WebSocket server
     const choices = ["rock", "paper", "scissors"];
+    let playerChoice = null;
 
-    function getWinner(playerChoice, computerChoice) {
-        if (playerChoice === computerChoice) {
-            return "It's a tie!";
-        }
-        if (
-            (playerChoice === "rock" && computerChoice === "scissors") ||
-            (playerChoice === "paper" && computerChoice === "rock") ||
-            (playerChoice === "scissors" && computerChoice === "paper")
-        ) {
-            return "You win!";
-        }
-        return "Computer wins!";
+    function updateUI(message) {
+        document.getElementById("result").textContent = message;
     }
 
-    function playGame(playerChoice) {
-        const computerChoice = choices[Math.floor(Math.random() * choices.length)];
-        document.getElementById("computer-choice").textContent = `Computer chose: ${computerChoice}`;
-        document.getElementById("result").textContent = getWinner(playerChoice, computerChoice);
+    function playGame(choice) {
+        playerChoice = choice;
+        socket.emit("playerChoice", choice); // Send choice to server
+        updateUI("Waiting for opponent...");
     }
 
-    // Event listeners using IDs
+    // Event listeners for player choices
     document.getElementById("rock").addEventListener("click", () => playGame("rock"));
     document.getElementById("paper").addEventListener("click", () => playGame("paper"));
     document.getElementById("scissors").addEventListener("click", () => playGame("scissors"));
 
-    // Display results
+    // Receive game result from server
+    socket.on("gameResult", ({ playerChoice, opponentChoice, result }) => {
+        document.getElementById("computer-choice").textContent = `Opponent chose: ${opponentChoice}`;
+        updateUI(result);
+    });
+
+    // UI setup
     const container = document.querySelector(".container");
     const computerChoiceDisplay = document.createElement("p");
     computerChoiceDisplay.id = "computer-choice";
     const resultDisplay = document.createElement("p");
     resultDisplay.id = "result";
-    
+
     container.appendChild(computerChoiceDisplay);
     container.appendChild(resultDisplay);
 });
