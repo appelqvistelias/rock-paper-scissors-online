@@ -70,9 +70,9 @@ function checkGameresult(socket) {
 
 function determineWinner(choice1, choice2) {
     const outcomes = {
-        rock: { rock: "Oavgjort!", scissors: "Du vann!", paper: "Du förlorade!" },
-        paper: { rock: "Du vann!", paper: "Oavgjort!", scissors: "Du förlorade!" },
-        scissors: { rock: "Du förlorade!", paper: "Du vann!", scissors: "Oavgjort!" }
+        rock: { rock: "Draw!", scissors: "You won!", paper: "You lost!" },
+        paper: { rock: "You won!", paper: "Draw!", scissors: "You lost!" },
+        scissors: { rock: "You lost!", paper: "You won!", scissors: "Draw!" }
     };
     return { player1: outcomes[choice1][choice2], player2: outcomes[choice2][choice1] };
 }
