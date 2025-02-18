@@ -55,3 +55,24 @@ io.on("connection", (socket) => {
     });
 });
 
+function checkGameresult(socket) {
+    const player = players[socket.id];
+    const opponent = players[player.opponent];
+
+    if (player.choice && opponent.choice) {
+        const result = determineWinner(player.choice, opponent.choice);
+        io.to(player.room).emit("gameResult", result);
+
+        player.choice = null;
+        opponent.choice = null;
+    }
+}
+
+function determineWinner(choice1, choice2) {
+    const outcomes = {
+        rock: { rock: "Oavgjort!", scissors: "Du vann!", paper: "Du förlorade!" },
+        paper: { rock: "Du vann!", paper: "Oavgjort!", scissors: "Du förlorade!" },
+        scissors: { rock: "Du förlorade!", paper: "Du vann!", scissors: "Oavgjort!" }
+    };
+    return { player1: outcomes[choice1][choice2], player2: outcomes[choice2][choice1] };
+}
