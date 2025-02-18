@@ -18,7 +18,7 @@ app.use(express.static(path.join(__dirname, "public")));
 
 // Pairing players
 const players = {};
-const waitingPlayer = null;
+let waitingPlayer = null;
 
 io.on("connection", (socket) => {
     console.log(`New player connected:  ${socket.id}`);
@@ -41,8 +41,15 @@ io.on("connection", (socket) => {
         waitingPlayer = null;
     }
 
+    socket.on("playerChoice", (choice) => {
+        if (players[socket.id]) {
+            players[socket.id].choice = choice;
+            checkGameresult(socket);
+        }
+    });
+
     socket.on("disconnect", () => {
-        console.log(`Player disconnected from ${socket.id}`);
+        console.log(`Player disconnected: ${socket.id}`);
 
         if (players[socket.id]) {
             const opponentId = players[socket.id].opponent;
@@ -52,12 +59,19 @@ io.on("connection", (socket) => {
             }
             delete players[socket.id];
         }
+
+        if (waitingPlayer === socket) {
+            waitingPlayer = null;
+        }
     });
 });
 
 function checkGameresult(socket) {
     const player = players[socket.id];
+    if (!player) return;
+
     const opponent = players[player.opponent];
+    if (!opponent) return;
 
     if (player.choice && opponent.choice) {
         const result = determineWinner(player.choice, opponent.choice);
@@ -76,3 +90,7 @@ function determineWinner(choice1, choice2) {
     };
     return { player1: outcomes[choice1][choice2], player2: outcomes[choice2][choice1] };
 }
+
+server.listen(3000, () => {
+    console.log("Server running on http://localhost:3000");
+});
