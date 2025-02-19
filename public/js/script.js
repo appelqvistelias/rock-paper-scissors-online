@@ -12,6 +12,27 @@ document.addEventListener("DOMContentLoaded", () => {
         socket.emit("playerChoice", choice); // Send choice to server
         updateUI("Waiting for opponent...");
     }
+    
+    function disableButtons(disable) {
+        document.querySelectorAll('.buttons button').forEach(button => {
+        button.disabled = disable;
+        });
+    }
+
+    socket.on("waiting", (message) => {
+        updateUI(message);
+        disableButtons(false); // Keep buttons enabled while waiting for opponent
+    });
+    
+    socket.on("startGame", (message) => {
+        updateUI(message);
+        disableButtons(false);
+    });
+    
+    socket.on("waitingForChoice", (message) => {
+        updateUI(message);
+        disableButtons(true); // Disable buttons while waiting for opponent's choice
+    });
 
     // Alert when opponent leaves the game.
     socket.on("opponentLeft", (message) => {
@@ -25,9 +46,11 @@ document.addEventListener("DOMContentLoaded", () => {
     document.getElementById("scissors").addEventListener("click", () => playGame("scissors"));
 
     // Receive game result from server
-    socket.on("gameResult", ({ playerChoice, opponentChoice, result }) => {
+    socket.on("gameResult", (data) => {
+        const { playerChoice, opponentChoice, result } = data;
         document.getElementById("computer-choice").textContent = `Opponent chose: ${opponentChoice}`;
         updateUI(result);
+        disableButtons(false);
     });
 
     // UI setup
