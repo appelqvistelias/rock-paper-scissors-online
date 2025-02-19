@@ -13,6 +13,12 @@ document.addEventListener("DOMContentLoaded", () => {
         updateUI("Waiting for opponent...");
     }
 
+    // Alert when opponent leaves the game.
+    socket.on("opponentLeft", (message) => {
+        updateUI(message);
+        alert("Your opponent has left the game.");
+    });
+
     // Event listeners for player choices
     document.getElementById("rock").addEventListener("click", () => playGame("rock"));
     document.getElementById("paper").addEventListener("click", () => playGame("paper"));
