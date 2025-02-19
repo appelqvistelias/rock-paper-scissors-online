@@ -96,15 +96,21 @@ function checkGameresult(socket) {
     }
 }
 
-function determineWinner(choice1, choice2) {
-    const outcomes = {
-        rock: { rock: "Draw!", scissors: "You won!", paper: "You lost!" },
-        paper: { rock: "You won!", paper: "Draw!", scissors: "You lost!" },
-        scissors: { rock: "You lost!", paper: "You won!", scissors: "Draw!" }
-    };
-    return { player1: outcomes[choice1][choice2], player2: outcomes[choice2][choice1] };
-}
+function determineWinner(playerChoice, opponentChoice) {
+   if (playerChoice === opponentChoice) {
+        return "Draw!";
+   }
 
+   if (
+        (playerChoice === "rock" && opponentChoice === "scissors") ||
+        (playerChoice === "paper" && opponentChoice === "rock") ||
+        (playerChoice === "scissors" && opponentChoice === "paper")
+    ) {
+        return "You won!"; 
+    } else {
+        return "You lost!";
+    }
+}
 server.listen(3000, () => {
     console.log("Server running on http://localhost:3000");
 });
