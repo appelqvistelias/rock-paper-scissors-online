@@ -44,7 +44,7 @@ io.on("connection", (socket) => {
     socket.on("playerChoice", (choice) => {
         if (players[socket.id]) {
             players[socket.id].choice = choice;
-            checkGameresult(socket);
+            checkGameResult(socket);
         }
     });
 
@@ -66,7 +66,7 @@ io.on("connection", (socket) => {
     });
 });
 
-function checkGameresult(socket) {
+function checkGameResult(socket) {
     const player = players[socket.id];
     if (!player) return;
 
@@ -74,23 +74,43 @@ function checkGameresult(socket) {
     if (!opponent) return;
 
     if (player.choice && opponent.choice) {
-        const result = determineWinner(player.choice, opponent.choice);
-        io.to(player.room).emit("gameResult", result);
+        const player1Result = determineWinner(player.choice, opponent.choice);
+        const player2Result = determineWinner(opponent.choice, player.choice);
+
+        socket.emit("gameResult", {
+            playerChoice: player.choice,
+            opponentChoice: opponent.choice,
+            result: player1Result
+        });
+
+        io.to(opponent.id).emit("gameResult", {
+            playerChoice: opponent.choice,
+            opponentChoice: player.choice,
+            result: player2Result
+        });
 
         player.choice = null;
         opponent.choice = null;
+    } else {
+        socket.emit("waitingForChoice", "Waiting for opponent to choose...");
     }
 }
 
-function determineWinner(choice1, choice2) {
-    const outcomes = {
-        rock: { rock: "Draw!", scissors: "You won!", paper: "You lost!" },
-        paper: { rock: "You won!", paper: "Draw!", scissors: "You lost!" },
-        scissors: { rock: "You lost!", paper: "You won!", scissors: "Draw!" }
-    };
-    return { player1: outcomes[choice1][choice2], player2: outcomes[choice2][choice1] };
-}
+function determineWinner(playerChoice, opponentChoice) {
+   if (playerChoice === opponentChoice) {
+        return "Draw!";
+   }
 
+   if (
+        (playerChoice === "rock" && opponentChoice === "scissors") ||
+        (playerChoice === "paper" && opponentChoice === "rock") ||
+        (playerChoice === "scissors" && opponentChoice === "paper")
+    ) {
+        return "You won!"; 
+    } else {
+        return "You lost!";
+    }
+}
 server.listen(3000, () => {
     console.log("Server running on http://localhost:3000");
 });
