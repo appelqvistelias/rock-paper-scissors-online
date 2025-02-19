@@ -51,17 +51,37 @@ io.on("connection", (socket) => {
     socket.on("disconnect", () => {
         console.log(`Player disconnected: ${socket.id}`);
 
-        if (players[socket.id]) {
-            const opponentId = players[socket.id].opponent;
-            if (opponentId && players[opponentId]) {
-                io.to(players[socket.id].room).emit("opponentLeft", "Opponent left the game");
-                delete players[opponentId];
-            }
-            delete players[socket.id];
-        }
-
         if (waitingPlayer === socket) {
             waitingPlayer = null;
+            return;
+        }
+
+        if (players[socket.id]) {
+            const opponentId = players[socket.id].opponent;
+            const room = players[socket.id].room;
+
+            if (opponentId && players[opponentId]) {
+                // Notify opponent and give them 30 seconds to reconnect
+                io.to(opponentId).emit("opponentDisconnected", "Opponent disconnected. Waiting for reconnection...");
+
+                // Store room info for potential reconnection
+                const roomInfo = {
+                    players: [socket.id, opponentId],
+                    room: room,
+                    disconnectTime: Date.now()  
+                };
+
+                // Keep room alive for 30 seconds
+                setTimeout(() => {
+                    // If opponent hasn't reconnected, clean up
+                    if (players[opponentId]) {
+                        io.to(opponentId).emit("opponentLeft", "Opponent left the game");
+                        delete players[opponentId];
+                    }
+                }, 30000);
+            }
+
+            delete players[socket.id];
         }
     });
 });
@@ -74,23 +94,25 @@ function checkGameResult(socket) {
     if (!opponent) return;
 
     if (player.choice && opponent.choice) {
-        const player1Result = determineWinner(player.choice, opponent.choice);
-        const player2Result = determineWinner(opponent.choice, player.choice);
-
-        socket.emit("gameResult", {
-            playerChoice: player.choice,
-            opponentChoice: opponent.choice,
-            result: player1Result
-        });
-
-        io.to(opponent.id).emit("gameResult", {
-            playerChoice: opponent.choice,
-            opponentChoice: player.choice,
-            result: player2Result
+        io.to(player.room).emit("gameResult", {
+            player1: {
+                id: socket.id,
+                choice: player.choice,
+                opponentChoice: opponent.choice,
+                result: determineWinner(player.choice, opponent.choice)
+            },
+            player2: {
+                id: player.opponent,
+                choice: opponent.choice,
+                opponentChoice: player.choice,
+                result: determineWinner(opponent.choice, player.choice)
+            }
         });
 
         player.choice = null;
         opponent.choice = null;
+
+        io.to(player.room).emit("roundComplete", "Round complete! Choose again for the next round.");
     } else {
         socket.emit("waitingForChoice", "Waiting for opponent to choose...");
     }

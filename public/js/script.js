@@ -1,6 +1,5 @@
 document.addEventListener("DOMContentLoaded", () => {
     const socket = io(); // Connect to WebSocket server
-    const choices = ["rock", "paper", "scissors"];
     let playerChoice = null;
 
     function updateUI(message) {
@@ -47,10 +46,17 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // Receive game result from server
     socket.on("gameResult", (data) => {
-        const { playerChoice, opponentChoice, result } = data;
-        document.getElementById("computer-choice").textContent = `Opponent chose: ${opponentChoice}`;
-        updateUI(result);
-        disableButtons(false);
+        const playerData = socket.id === data.player1.id ? data.player1 : data.player2;
+
+        document.getElementById("computer-choice").textContent = `Opponent chose: ${playerData.opponentChoice}`;
+        updateUI(playerData.result);
+    });
+
+    socket.on("roundComplete", (message) => {
+        setTimeout(() => {
+            updateUI(message);
+            enableButtons();
+        }, 5000); // Wait 5 seconds before allowing new choices
     });
 
     // UI setup
