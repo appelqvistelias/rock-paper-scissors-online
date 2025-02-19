@@ -44,7 +44,7 @@ io.on("connection", (socket) => {
     socket.on("playerChoice", (choice) => {
         if (players[socket.id]) {
             players[socket.id].choice = choice;
-            checkGameresult(socket);
+            checkGameResult(socket);
         }
     });
 
@@ -66,7 +66,7 @@ io.on("connection", (socket) => {
     });
 });
 
-function checkGameresult(socket) {
+function checkGameResult(socket) {
     const player = players[socket.id];
     if (!player) return;
 
