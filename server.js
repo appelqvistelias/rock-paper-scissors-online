@@ -74,11 +74,25 @@ function checkGameresult(socket) {
     if (!opponent) return;
 
     if (player.choice && opponent.choice) {
-        const result = determineWinner(player.choice, opponent.choice);
-        io.to(player.room).emit("gameResult", result);
+        const player1Result = determineWinner(player.choice, opponent.choice);
+        const player2Result = determineWinner(opponent.choice, player.choice);
+
+        socket.emit("gameResult", {
+            playerChoice: player.choice,
+            opponentChoice: opponent.choice,
+            result: player1Result
+        });
+
+        io.to(opponent.id).emit("gameResult", {
+            playerChoice: opponent.choice,
+            opponentChoice: player.choice,
+            result: player2Result
+        });
 
         player.choice = null;
         opponent.choice = null;
+    } else {
+        socket.emit("waitingForChoice", "Waiting for opponent to choose...");
     }
 }
 
