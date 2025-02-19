@@ -51,17 +51,37 @@ io.on("connection", (socket) => {
     socket.on("disconnect", () => {
         console.log(`Player disconnected: ${socket.id}`);
 
-        if (players[socket.id]) {
-            const opponentId = players[socket.id].opponent;
-            if (opponentId && players[opponentId]) {
-                io.to(players[socket.id].room).emit("opponentLeft", "Opponent left the game");
-                delete players[opponentId];
-            }
-            delete players[socket.id];
-        }
-
         if (waitingPlayer === socket) {
             waitingPlayer = null;
+            return;
+        }
+
+        if (players[socket.id]) {
+            const opponentId = players[socket.id].opponent;
+            const room = players[socket.id].room;
+
+            if (opponentId && players[opponentId]) {
+                // Notify opponent and give them 30 seconds to reconnect
+                io.to(opponentId).emit("opponentDisconnected", "Opponent disconnected. Waiting for reconnection...");
+
+                // Store room info for potential reconnection
+                const roomInfo = {
+                    players: [socket.id, opponentId],
+                    room: room,
+                    disconnectTime: Date.now()  
+                };
+
+                // Keep room alive for 30 seconds
+                setTimeout(() => {
+                    // If opponent hasn't reconnected, clean up
+                    if (players[opponentId]) {
+                        io.to(opponentId).emit("opponentLeft", "Opponent left the game");
+                        delete players[opponentId];
+                    }
+                }, 30000);
+            }
+
+            delete players[socket.id];
         }
     });
 });
