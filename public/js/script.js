@@ -1,10 +1,10 @@
 document.addEventListener("DOMContentLoaded", () => {
     // UI setup
+    const countdownHeading = document.querySelector(".countdown")
+    const gameStatusFeedback = document.querySelector(".game-status");
     const playerChoiceFeedback = document.querySelector(".player-choice");
     const opponentChoiceFeedback = document.querySelector(".opponent-choice");
     const resultFeedback = document.querySelector(".result");
-    const gameStatusFeedback = document.querySelector(".game-status");
-    const countdownHeading = document.querySelector(".countdown")
     const playerScoreElement = document.querySelector(".player-score");
     const opponentScoreElement = document.querySelector(".opponent-score");
     let playerScore = 0;
