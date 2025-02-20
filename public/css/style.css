@@ -3,12 +3,19 @@
     --retro-white: #e5e5e5;
     --retro-white-soft: #dcdcdc;
     
-    --primary-btn-background: #209cee;
-    --primary-btn-hover: #108de0;
-    --primary-btn-shadow: #006bb3;
+    --rock-btn-background: #787878;
+    --rock-btn-hover: #606060;
+    --rock-btn-shadow: #404040;
 
-    --button-edge-gray: #303030;
-    --button-text-gray: #dcdcdc;
+    --paper-btn-background: #d9c89e;
+    --paper-btn-hover: #bfa87d;
+    --paper-btn-shadow: #8e7a55;
+
+    --scissors-btn-background: #b68f40;
+    --scissors-btn-hover: #997833;
+    --scissors-btn-shadow: #705622;
+
+    --score-color: #4CAF50;
   }
 
 * {
@@ -88,19 +95,49 @@ main {
     height: 115%;
 }
 
-.btn-primary {
-    background-color: var(--primary-btn-background);
-    box-shadow: inset -3px -3px 0px 0px var(--primary-btn-shadow);
+.btn-rock {
+    background-color: var(--rock-btn-background);
+    box-shadow: inset -3px -3px 0px 0px var(--rock-btn-shadow);
 }
 
-.btn-primary:hover {
+.btn-rock:hover {
     cursor: pointer;
-    background-color: var(--primary-btn-hover);
-    box-shadow: inset -5px -5px 0px 0px var(--primary-btn-shadow);
+    background-color: var(--rock-btn-hover);
+    box-shadow: inset -5px -5px 0px 0px var(--rock-btn-shadow);
 }
 
-.btn-primary:active {
-    box-shadow: inset 3px 3px 0px 0px var(--primary-btn-shadow);
+.btn-rock:active {
+    box-shadow: inset 3px 3px 0px 0px var(--rock-btn-shadow);
+}
+
+.btn-paper {
+    background-color: var(--paper-btn-background);
+    box-shadow: inset -3px -3px 0px 0px var(--paper-btn-shadow);
+}
+
+.btn-paper:hover {
+    cursor: pointer;
+    background-color: var(--paper-btn-hover);
+    box-shadow: inset -5px -5px 0px 0px var(--paper-btn-shadow);
+}
+
+.btn-paper:active {
+    box-shadow: inset 3px 3px 0px 0px var(--paper-btn-shadow);
+}
+
+.btn-scissors {
+    background-color: var(--scissors-btn-background);
+    box-shadow: inset -3px -3px 0px 0px var(--scissors-btn-shadow);
+}
+
+.btn-scissors:hover {
+    cursor: pointer;
+    background-color: var(--paper-btn-hover);
+    box-shadow: inset -5px -5px 0px 0px var(--scissors-btn-shadow);
+}
+
+.btn-scissors:active {
+    box-shadow: inset 3px 3px 0px 0px var(--scissors-btn-shadow);
 }
 
 .scoreboard {
@@ -115,5 +152,5 @@ main {
 
 .player-score, .opponent-score {
     font-weight: bold;
-    color: #4CAF50;
+    color: var(--score-color);
 }
