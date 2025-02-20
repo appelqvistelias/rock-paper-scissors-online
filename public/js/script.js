@@ -5,7 +5,8 @@ document.addEventListener("DOMContentLoaded", () => {
     const resultFeedback = document.querySelector(".result");
     const gameStatusFeedback = document.querySelector(".game-status");
 
-    const socket = io("https://your-app-name.onrender.com"); // Connect to WebSocket server
+    // const socket = io("https://your-app-name.onrender.com"); // Connect to WebSocket server
+    const socket = io(); // Run server using localhost
     let playerChoice = null;
 
     function updateUI(element, message) {
@@ -45,8 +46,6 @@ document.addEventListener("DOMContentLoaded", () => {
         disableButtons(true); // Disable buttons while waiting for opponent's choice
     });
 
-    socket.on("")
-
     // Alert when opponent leaves the game.
     socket.on("opponentLeft", (message) => {
         updateUI(gameStatusFeedback, message);
@@ -57,13 +56,13 @@ document.addEventListener("DOMContentLoaded", () => {
     document.getElementById("paper").addEventListener("click", () => playGame("paper"));
     document.getElementById("scissors").addEventListener("click", () => playGame("scissors"));
 
-    // Receive game result from server
-    socket.on("gameResult", (data) => {
-        const playerData = socket.id === data.player1.id ? data.player1 : data.player2;
-
-        document.querySelector(".opponent-choice").textContent = `Opponent chose: ${playerData.opponentChoice}`;
-        updateUI(opponentChoiceFeedback, playerData.result);
-    });
+// Receive game result from server
+socket.on("gameResult", (data) => {
+    console.log("Received gameResult event:", data);
+    const playerData = socket.id === data.player1.id ? data.player1 : data.player2;
+    console.log("Player data:", playerData);
+    updateUI(opponentChoiceFeedback, `Opponent chose: ${playerData.opponentChoice}`);
+});
 
     socket.on("roundComplete", (message) => {
         setTimeout(() => {
