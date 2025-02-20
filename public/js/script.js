@@ -5,7 +5,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const resultFeedback = document.querySelector(".result");
     const gameStatusFeedback = document.querySelector(".game-status");
 
-    const socket = io(); // Connect to WebSocket server
+    const socket = io("https://your-app-name.onrender.com"); // Connect to WebSocket server
     let playerChoice = null;
 
     function updateUI(element, message) {
