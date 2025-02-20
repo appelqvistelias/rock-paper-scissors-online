@@ -1,106 +1,104 @@
+:root {
+    --retro-black: #121212;
+    --retro-white: #e5e5e5;
+    --retro-white-soft: #dcdcdc;
+    
+    --primary-btn-background: #209cee;
+    --primary-btn-hover: #108de0;
+    --primary-btn-shadow: #006bb3;
+
+    --button-edge-gray: #303030;
+    --button-text-gray: #dcdcdc;
+  }
+
 * {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
-    font-family: 'Poppins', sans-serif;
+}
+
+html {
+    font-size: 62.5%;
 }
 
 body {
-    background: linear-gradient(135deg, #1a1a2e, #16213e);
-    color: #ffffff;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    background-image: url('../images/rock-paper-scissors.png');
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: center;
+    font-family: "Press Start 2P", serif;
+    color: var(--retro-black);
     height: 100vh;
-    text-align: center;
-    overflow: hidden;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 
 main {
-    background: rgba(255, 255, 255, 0.1);
-    padding: 50px; 
-    border-radius: 20px;
-    box-shadow: 0px 0px 25px rgba(255, 255, 255, 0.2);
-    backdrop-filter: blur(10px);
-    width: 80%; 
-    max-width: 800px;
+    background-color: var(--retro-white);
+    border: 3px solid var(--retro-black);
 }
 
-h1 {
-    font-size: 36px;
-    margin-bottom: 15px;
-    letter-spacing: 2px;
-    background: linear-gradient(90deg, #00c9ff, #92fe9d);
-    -webkit-background-clip: text;
-    background-clip: text;
-    -webkit-text-fill-color: transparent;
-}
-
-h3 {
-    font-size: 24px; 
-    margin: 20px 0;
-    color: #b8c6db;
-}
-
-/* Button Container */
-.buttons {
+.container {
     display: flex;
+    flex-direction: column;
     justify-content: center;
-    gap: 40px; 
-    margin-top: 30px;
+    align-items: center;
+    gap: 2rem;
+    padding: 2rem;
 }
 
-/* Button Styling */
-button {
-    background: rgba(255, 255, 255, 0.2);
-    border: 3px solid transparent;
-    color: #fff;
-    padding: 18px 30px; 
-    font-size: 22px; 
-    border-radius: 12px;
-    cursor: pointer;
-    transition: all 0.3s ease-in-out;
+.buttons {
     position: relative;
-    min-width: 150px; 
-    font-weight: bold;
+    display: flex;
+    gap: 1rem;
+    padding: 1rem;
+    z-index: 0; /* To have the button before and after show */
 }
 
-/* Neon glow effect to buttons */
-button:hover {
-    border-color: #00c9ff;
-    background: rgba(255, 255, 255, 0.3);
-    transform: scale(1.5);
-    box-shadow: 0px 0px 10px #00c9ff;
+.eight-bit-btn {
+    position: relative;
+    padding: 1rem 1.5rem;
+    font-family: "Press Start 2P", serif;
+    font-size: 1.4rem;
+    color: var(--retro-black);
+    border: none;
+    -webkit-tap-highlight-color: transparent;
 }
 
-button:active {
-    transform: scale(0.9);
+.eight-bit-btn::before,
+.eight-bit-btn::after {
+    content: '';
+    position: absolute;
+    z-index: -1; /* To have the button before and after show */
+    background-color: var(--retro-black);
 }
 
-/* Individual button colors */
-#rock { background: rgba(255, 0, 0, 0.3); }
-#rock:hover { box-shadow: 0px 0px 20px rgba(255, 0, 0, 0.9); }
+.eight-bit-btn::after {
+    left: -2.5%;
+    top: 0;
+    width: 105%;
+    height: 100%;
+}
 
-#paper { background: rgba(0, 255, 0, 0.3); }
-#paper:hover { box-shadow: 0px 0px 20px rgba(0, 255, 0, 0.9); }
+.eight-bit-btn::before {
+    left: 0;
+    top: -7%;
+    width: 100%;
+    height: 115%;
+}
 
-#scissors { background: rgba(0, 0, 255, 0.3); }
-#scissors:hover { box-shadow: 0px 0px 20px rgba(0, 0, 255, 0.9); }
+.btn-primary {
+    background-color: var(--primary-btn-background);
+    box-shadow: inset -3px -3px 0px 0px var(--primary-btn-shadow);
+}
 
+.btn-primary:hover {
+    cursor: pointer;
+    background-color: var(--primary-btn-hover);
+    box-shadow: inset -5px -5px 0px 0px var(--primary-btn-shadow);
+}
 
-@media (max-width: 600px) {
-    .buttons {
-        flex-direction: column;
-        gap: 20px;
-    }
-
-    main {
-        width: 90%;
-        padding: 40px;
-    }
-
-    button {
-        font-size: 20px;
-        padding: 15px 25px;
-    }
+.btn-primary:active {
+    box-shadow: inset 3px 3px 0px 0px var(--primary-btn-shadow);
 }

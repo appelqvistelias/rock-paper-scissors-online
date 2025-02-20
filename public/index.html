@@ -4,20 +4,24 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <!-- <link rel="stylesheet" href="css/style.css"> -->
+    <link rel="stylesheet" href="css/style.css">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
 
     <title>Rock, Paper, Scissors ONLINE</title>
     <script src="/socket.io/socket.io.js"></script>
 </head>
 <body>
     <main>
-        <h1>Rock, Paper, Scissors: ONLINE</h1>
         <div class="container">
+            <h1>Rock, Paper, Scissors: ONLINE</h1>
             <h3>Choose your weapon!</h3>
             <div class="buttons">
-                <button id="rock">Rock 🪨</button>
-                <button id="paper">Paper 📄</button>
-                <button id="scissors">Scissors ✂️</button>
+                <button class="eight-bit-btn btn-primary" id="rock">Rock</button>
+                <button class="eight-bit-btn btn-primary" id="paper">Paper</button>
+                <button class="eight-bit-btn btn-primary" id="scissors">Scissors</button>
             </div> <!-- .buttons -->
 
             <div class="player-feedback">
