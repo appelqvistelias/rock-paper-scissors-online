@@ -4,6 +4,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const opponentChoiceFeedback = document.querySelector(".opponent-choice");
     const resultFeedback = document.querySelector(".result");
     const gameStatusFeedback = document.querySelector(".game-status");
+    const countdownHeading = document.querySelector(".countdown")
 
     // const socket = io("https://your-app-name.onrender.com"); // Connect to WebSocket server
     const socket = io(); // Run server using localhost
@@ -58,15 +59,29 @@ document.addEventListener("DOMContentLoaded", () => {
 
 // Receive game result from server
 socket.on("gameResult", (data) => {
+    console.log("Received gameResult event:", data);
     const playerData = socket.id === data.player1.id ? data.player1 : data.player2;
+    console.log("Player data:", playerData);
     updateUI(playerChoiceFeedback, `You chose: ${playerData.choice}`);
     updateUI(opponentChoiceFeedback, `Opponent chose: ${playerData.opponentChoice}`);
+    updateUI(resultFeedback, playerData.result);
 });
 
     socket.on("roundComplete", (message) => {
-        setTimeout(() => {
-            updateUI(resultFeedback, message);
-            enableButtons();
-        }, 5000); // Wait 5 seconds before allowing new choices
+        let countdown = 5; // 5 seconds countdown
+        countdownHeading.style.display = 'block'; // Show the countdownHeading element
+        updateUI(countdownHeading, `New round starts in ${countdown} seconds...`);
+        
+        const countdownInterval = setInterval(() => {
+            countdown--;
+            if (countdown > 0) {
+                updateUI(countdownHeading, `New round starts in ${countdown} seconds...`);
+            } else {
+                clearInterval(countdownInterval);
+                updateUI(resultFeedback, message);
+                enableButtons();
+                countdownHeading.style.display = 'none'; // Hide the countdownHeading element
+            }
+        }, 1000); // Update every second
     });
 });
