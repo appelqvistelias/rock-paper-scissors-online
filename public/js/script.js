@@ -1,15 +1,21 @@
 document.addEventListener("DOMContentLoaded", () => {
+    // UI setup
+    const playerChoiceFeedback = document.querySelector(".player-choice");
+    const opponentChoiceFeedback = document.querySelector(".opponent-choice");
+    const resultFeedback = document.querySelector(".result");
+    const gameStatusFeedback = document.querySelector(".game-status");
+
     const socket = io(); // Connect to WebSocket server
     let playerChoice = null;
 
-    function updateUI(message) {
-        document.getElementById("result").textContent = message;
+    function updateUI(element, message) {
+        element.textContent = message;
     }
 
     function playGame(choice) {
         playerChoice = choice;
         socket.emit("playerChoice", choice); // Send choice to server
-        updateUI("Waiting for opponent...");
+        updateUI(gameStatusFeedback, "Waiting for opponent...");
     }
     
     function disableButtons(disable) {
@@ -25,17 +31,17 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     socket.on("waiting", (message) => {
-        updateUI(message);
+        updateUI(gameStatusFeedback, message);
         disableButtons(false); // Keep buttons enabled while waiting for opponent
     });
     
     socket.on("startGame", (message) => {
-        updateUI(message);
+        updateUI(gameStatusFeedback, message);
         disableButtons(false);
     });
     
     socket.on("waitingForChoice", (message) => {
-        updateUI(message);
+        updateUI(gameStatusFeedback, message);
         disableButtons(true); // Disable buttons while waiting for opponent's choice
     });
 
@@ -43,8 +49,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // Alert when opponent leaves the game.
     socket.on("opponentLeft", (message) => {
-        updateUI(message);
-        alert("Your opponent has left the game.");
+        updateUI(gameStatusFeedback, message);
     });
 
     // Event listeners for player choices
@@ -56,24 +61,14 @@ document.addEventListener("DOMContentLoaded", () => {
     socket.on("gameResult", (data) => {
         const playerData = socket.id === data.player1.id ? data.player1 : data.player2;
 
-        document.getElementById("computer-choice").textContent = `Opponent chose: ${playerData.opponentChoice}`;
-        updateUI(playerData.result);
+        document.querySelector(".opponent-choice").textContent = `Opponent chose: ${playerData.opponentChoice}`;
+        updateUI(opponentChoiceFeedback, playerData.result);
     });
 
     socket.on("roundComplete", (message) => {
         setTimeout(() => {
-            updateUI(message);
+            updateUI(resultFeedback, message);
             enableButtons();
         }, 5000); // Wait 5 seconds before allowing new choices
     });
-
-    // UI setup
-    const container = document.querySelector(".container");
-    const computerChoiceDisplay = document.createElement("p");
-    computerChoiceDisplay.id = "computer-choice";
-    const resultDisplay = document.createElement("p");
-    resultDisplay.id = "result";
-
-    container.appendChild(computerChoiceDisplay);
-    container.appendChild(resultDisplay);
 });
