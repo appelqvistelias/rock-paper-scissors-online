@@ -18,6 +18,12 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     }
 
+    function enableButtons(enable) {
+        document.querySelectorAll('.buttons button').forEach(button => {
+        button.disabled = enable;
+        });
+    }
+
     socket.on("waiting", (message) => {
         updateUI(message);
         disableButtons(false); // Keep buttons enabled while waiting for opponent
@@ -32,6 +38,8 @@ document.addEventListener("DOMContentLoaded", () => {
         updateUI(message);
         disableButtons(true); // Disable buttons while waiting for opponent's choice
     });
+
+    socket.on("")
 
     // Alert when opponent leaves the game.
     socket.on("opponentLeft", (message) => {
