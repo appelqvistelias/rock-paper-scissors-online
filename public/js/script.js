@@ -5,6 +5,10 @@ document.addEventListener("DOMContentLoaded", () => {
     const resultFeedback = document.querySelector(".result");
     const gameStatusFeedback = document.querySelector(".game-status");
     const countdownHeading = document.querySelector(".countdown")
+    const playerScoreElement = document.querySelector(".player-score");
+    const opponentScoreElement = document.querySelector(".opponent-score");
+    let playerScore = 0;
+    let opponentScore = 0;
 
     // const socket = io("https://your-app-name.onrender.com"); // Connect to WebSocket server
     const socket = io(); // Run server using localhost
@@ -30,6 +34,16 @@ document.addEventListener("DOMContentLoaded", () => {
         document.querySelectorAll('.buttons button').forEach(button => {
         button.disabled = enable;
         });
+    }
+
+    function updateScore(result) {
+        if (result === "You won!") {
+            playerScore++;
+            playerScoreElement.textContent = playerScore;
+        } else if (result === "You lost!") {
+            opponentScore++;
+            opponentScoreElement.textContent = opponentScore;
+        }
     }
 
     socket.on("waiting", (message) => {
@@ -65,6 +79,7 @@ socket.on("gameResult", (data) => {
     updateUI(playerChoiceFeedback, `You chose: ${playerData.choice}`);
     updateUI(opponentChoiceFeedback, `Opponent chose: ${playerData.opponentChoice}`);
     updateUI(resultFeedback, playerData.result);
+    updateScore(playerData.result);
 });
 
     socket.on("roundComplete", (message) => {
