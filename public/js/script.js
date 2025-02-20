@@ -14,6 +14,10 @@ document.addEventListener("DOMContentLoaded", () => {
     const socket = io(); // Run server using localhost
     let playerChoice = null;
 
+    function capitalizeFirstLetter(str) {
+        return str.charAt(0).toUpperCase() + str.slice(1);
+    }
+
     function updateUI(element, message) {
         element.textContent = message;
     }
@@ -76,8 +80,8 @@ socket.on("gameResult", (data) => {
     console.log("Received gameResult event:", data);
     const playerData = socket.id === data.player1.id ? data.player1 : data.player2;
     console.log("Player data:", playerData);
-    updateUI(playerChoiceFeedback, `You chose: ${playerData.choice}`);
-    updateUI(opponentChoiceFeedback, `Opponent chose: ${playerData.opponentChoice}`);
+    updateUI(playerChoiceFeedback, "You chose: " + capitalizeFirstLetter(playerData.choice));
+    updateUI(opponentChoiceFeedback, "Opponent chose: " + capitalizeFirstLetter(playerData.opponentChoice));
     updateUI(resultFeedback, playerData.result);
     updateScore(playerData.result);
 });
