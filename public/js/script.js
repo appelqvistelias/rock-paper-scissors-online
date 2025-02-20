@@ -58,9 +58,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
 // Receive game result from server
 socket.on("gameResult", (data) => {
-    console.log("Received gameResult event:", data);
     const playerData = socket.id === data.player1.id ? data.player1 : data.player2;
-    console.log("Player data:", playerData);
+    updateUI(playerChoiceFeedback, `You chose: ${playerData.choice}`);
     updateUI(opponentChoiceFeedback, `Opponent chose: ${playerData.opponentChoice}`);
 });
 
