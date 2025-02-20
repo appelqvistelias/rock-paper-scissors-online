@@ -102,3 +102,18 @@ main {
 .btn-primary:active {
     box-shadow: inset 3px 3px 0px 0px var(--primary-btn-shadow);
 }
+
+.scoreboard {
+    margin: 20px auto;
+    text-align: center;
+    font-size: 1.2em;
+}
+
+.scoreboard p {
+    margin: 10px 0;
+}
+
+.player-score, .opponent-score {
+    font-weight: bold;
+    color: #4CAF50;
+}
