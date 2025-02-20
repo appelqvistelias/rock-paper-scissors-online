@@ -1,10 +1,10 @@
 document.addEventListener("DOMContentLoaded", () => {
     // UI setup
+    const countdownHeading = document.querySelector(".countdown")
+    const gameStatusFeedback = document.querySelector(".game-status");
     const playerChoiceFeedback = document.querySelector(".player-choice");
     const opponentChoiceFeedback = document.querySelector(".opponent-choice");
     const resultFeedback = document.querySelector(".result");
-    const gameStatusFeedback = document.querySelector(".game-status");
-    const countdownHeading = document.querySelector(".countdown")
     const playerScoreElement = document.querySelector(".player-score");
     const opponentScoreElement = document.querySelector(".opponent-score");
     let playerScore = 0;
@@ -13,6 +13,10 @@ document.addEventListener("DOMContentLoaded", () => {
     // const socket = io("https://your-app-name.onrender.com"); // Connect to WebSocket server
     const socket = io(); // Run server using localhost
     let playerChoice = null;
+
+    function capitalizeFirstLetter(str) {
+        return str.charAt(0).toUpperCase() + str.slice(1);
+    }
 
     function updateUI(element, message) {
         element.textContent = message;
@@ -76,8 +80,8 @@ socket.on("gameResult", (data) => {
     console.log("Received gameResult event:", data);
     const playerData = socket.id === data.player1.id ? data.player1 : data.player2;
     console.log("Player data:", playerData);
-    updateUI(playerChoiceFeedback, `You chose: ${playerData.choice}`);
-    updateUI(opponentChoiceFeedback, `Opponent chose: ${playerData.opponentChoice}`);
+    updateUI(playerChoiceFeedback, "You chose: " + capitalizeFirstLetter(playerData.choice));
+    updateUI(opponentChoiceFeedback, "Opponent chose: " + capitalizeFirstLetter(playerData.opponentChoice));
     updateUI(resultFeedback, playerData.result);
     updateScore(playerData.result);
 });
