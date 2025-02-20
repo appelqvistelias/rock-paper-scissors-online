@@ -55,6 +55,15 @@ main {
     padding: 2rem;
 }
 
+h1 {
+    text-align: center;
+}
+
+.subtitle {
+    margin-top: 1rem;
+    display: block;
+}
+
 .buttons {
     position: relative;
     display: flex;
