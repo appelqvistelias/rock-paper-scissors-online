@@ -13,6 +13,7 @@
     <title>Rock, Paper, Scissors ONLINE</title>
     <script src="/socket.io/socket.io.js"></script>
 </head>
+
 <body>
     <main>
         <div class="container">
@@ -22,12 +23,14 @@
             </h1>
 
             <div class="username-input">
-                <input type="text" id="username" placeholder="Enter your name">
-                <button id="submit-username">Enter</button>
-            </div>
+                <input type="text" id="username" placeholder="Submit gamer tag">
+                <button class="eight-bit-btn btn-submit" id="submit-username">Enter</button>
+            </div> <!-- .username-input -->
 
             <h3>Choose your weapon!</h3>
+
             <h4 class="countdown"></h4>
+
             <div class="buttons">
                 <button class="eight-bit-btn btn-rock" id="rock">Rock</button>
                 <button class="eight-bit-btn btn-paper" id="paper">Paper</button>
@@ -40,15 +43,13 @@
                 <div class="opponent-choice"></div>
                 <div class="result"></div>
                 <div class="opponent-username"></div>
-
             </div> <!-- .player-feedback -->
+            
+            <div class="scoreboard">
+                <p>Your Score: <span class="player-score">0</span></p>
+                <p>Opponent Score: <span class="opponent-score">0</span></p>
+            </div> <!-- .scoreboard -->
         </div> <!-- .container -->
-
-        <div class="scoreboard">
-            <p>Your Score: <span class="player-score">0</span></p>
-            <p>Opponent Score: <span class="opponent-score">0</span></p>
-        </div>
-
     </main>
 
     <script src="js/script.js"></script>
