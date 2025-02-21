@@ -1,24 +1,33 @@
 document.addEventListener("DOMContentLoaded", () => {
+    setButtonState(false);
+
     // UI setup
     const usernameInput = document.getElementById("username");
     const submitUsernameButton = document.getElementById("submit-username");
-    const opponentUsernameElement = document.querySelector(".opponent-username");
+
     const countdownHeading = document.querySelector(".countdown")
+    
     const gameStatusFeedback = document.querySelector(".game-status");
     const playerChoiceFeedback = document.querySelector(".player-choice");
     const opponentChoiceFeedback = document.querySelector(".opponent-choice");
     const resultFeedback = document.querySelector(".result");
+    
+    const opponentUsernameElement = document.querySelector(".opponent-username");
+    
     const playerScoreElement = document.querySelector(".player-score");
     const opponentScoreElement = document.querySelector(".opponent-score");
     let playerScore = 0;
     let opponentScore = 0;
 
-    // const socket = io("https://your-app-name.onrender.com"); // Connect to WebSocket server
-    const socket = io(); // Run server using localhost
-    let playerChoice = null;
-
+    // Functions
     function capitalizeFirstLetter(str) {
         return str.charAt(0).toUpperCase() + str.slice(1);
+    }
+    
+    function setButtonState(enabled) { // true = enabled, false = disabled
+        document.querySelectorAll('.buttons button').forEach(button => {
+            button.disabled = !enabled;
+        });
     }
 
     function updateUI(element, message) {
@@ -27,33 +36,10 @@ document.addEventListener("DOMContentLoaded", () => {
 
     function playGame(choice) {
         playerChoice = choice;
+        setButtonState(false);
         socket.emit("playerChoice", choice); // Send choice to server
-        updateUI(gameStatusFeedback, "Waiting for opponent...");
     }
-
-    submitUsernameButton.addEventListener("click", () => {
-        const username = usernameInput.value.trim();
-        if (username) {
-            socket.emit("setUsername", username);
-            document.querySelectorAll('.buttons button').forEach(button => button.disabled = false);
-            submitUsernameButton.disabled = true;
-            usernameInput.disabled = true;
-            submitUsernameButton.style.display = 'none';
-        }
-    });
     
-    function disableButtons(disable) {
-        document.querySelectorAll('.buttons button').forEach(button => {
-        button.disabled = disable;
-        });
-    }
-
-    function enableButtons(enable) {
-        document.querySelectorAll('.buttons button').forEach(button => {
-        button.disabled = enable;
-        });
-    }
-
     function updateScore(result) {
         if (result === "You won!") {
             playerScore++;
@@ -64,66 +50,70 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     }
 
+    // socket.io
+    // const socket = io("https://your-app-name.onrender.com"); // Connect to WebSocket server
+    const socket = io(); // Run server using localhost
+    let playerChoice = null;
+    
     socket.on("waiting", (message) => {
         updateUI(gameStatusFeedback, message);
-        disableButtons(false); // Keep buttons enabled while waiting for opponent
     });
     
     socket.on("startGame", (message) => {
         updateUI(gameStatusFeedback, message);
-        disableButtons(false);
+        setButtonState(true);
     });
     
     socket.on("waitingForChoice", (message) => {
         updateUI(gameStatusFeedback, message);
-        disableButtons(true); // Disable buttons while waiting for opponent's choice
     });
 
     // Alert when opponent leaves the game.
     socket.on("opponentLeft", (message) => {
         updateUI(gameStatusFeedback, message);
+        setButtonState(false);
     });
 
-    // Event listeners for player choices
-    document.getElementById("rock").addEventListener("click", () => playGame("rock"));
-    document.getElementById("paper").addEventListener("click", () => playGame("paper"));
-    document.getElementById("scissors").addEventListener("click", () => playGame("scissors"));
+    socket.on("opponentDisconnected", (message) => {
+        updateUI(gameStatusFeedback, message);
+        setButtonState(false);
+    });
 
     socket.on("opponentUsername", (username) => {
         updateUI(opponentUsernameElement, `You're playing against: ${username}`);
     });
 
-// Receive game result from server
-socket.on("gameResult", (data) => {
-    console.log("Received gameResult event:", data);
-    const playerData = socket.id === data.player1.id ? data.player1 : data.player2;
-    console.log("Player data:", playerData);
-    updateUI(playerChoiceFeedback, "You chose: " + capitalizeFirstLetter(playerData.choice));
-    updateUI(opponentChoiceFeedback, "Opponent chose: " + capitalizeFirstLetter(playerData.opponentChoice));
+    // Receive game result from server
+    socket.on("gameResult", (data) => {
+        console.log("Received gameResult event:", data);
+        const playerData = socket.id === data.player1.id ? data.player1 : data.player2;
+        console.log("Player data:", playerData);
+        updateUI(playerChoiceFeedback, "You chose: " + capitalizeFirstLetter(playerData.choice));
+        updateUI(opponentChoiceFeedback, "Opponent chose: " + capitalizeFirstLetter(playerData.opponentChoice));
 
-    switch (playerData.result) {
-        case "You won!":
-            resultFeedback.classList.add("winner");
-            resultFeedback.classList.remove("draw");
-            resultFeedback.classList.remove("loser");
-            break;
+        switch (playerData.result) {
+            case "You won!":
+                resultFeedback.classList.add("winner");
+                resultFeedback.classList.remove("draw");
+                resultFeedback.classList.remove("loser");
+                break;
 
-        case "You lost!":
-            resultFeedback.classList.add("loser");
-            resultFeedback.classList.remove("draw");
-            resultFeedback.classList.remove("winner");
-            break;
+            case "You lost!":
+                resultFeedback.classList.add("loser");
+                resultFeedback.classList.remove("draw");
+                resultFeedback.classList.remove("winner");
+                break;
 
-        case "Draw!":
-            resultFeedback.classList.add("draw");
-            resultFeedback.classList.remove("winner");
-            resultFeedback.classList.remove("loser");
-            break;
-    }
-   
-    updateUI(resultFeedback, playerData.result);
-    updateScore(playerData.result);
-});
+            case "Draw!":
+                resultFeedback.classList.add("draw");
+                resultFeedback.classList.remove("winner");
+                resultFeedback.classList.remove("loser");
+                break;
+        }
+    
+        updateUI(resultFeedback, playerData.result);
+        updateScore(playerData.result);
+    });
 
     socket.on("roundComplete", (message) => {
         let countdown = 5; // 5 seconds countdown
@@ -137,8 +127,23 @@ socket.on("gameResult", (data) => {
             } else {
                 clearInterval(countdownInterval);
                 updateUI(countdownHeading, message);
-                enableButtons();
+                setButtonState(true);
             }
         }, 1000); // Update every second
+    });
+
+    // Event listeners
+    document.getElementById("rock").addEventListener("click", () => playGame("rock"));
+    document.getElementById("paper").addEventListener("click", () => playGame("paper"));
+    document.getElementById("scissors").addEventListener("click", () => playGame("scissors"));
+    
+    submitUsernameButton.addEventListener("click", () => {
+        const username = usernameInput.value.trim();
+        if (username) {
+            socket.emit("setUsername", username);
+            submitUsernameButton.disabled = true;
+            usernameInput.disabled = true;
+            submitUsernameButton.style.display = 'none';
+        }
     });
 });

@@ -115,6 +115,15 @@ h1 {
     height: 115%;
 }
 
+.eight-bit-btn:disabled,
+.eight-bit-btn:disabled:hover,
+.eight-bit-btn:disabled:active  {
+    background-color: var(--retro-light-gray);
+    color: var(--retro-white);
+    box-shadow: none;
+    cursor: not-allowed;
+}
+
 .btn-submit {
     background-color: var(--submit-btn-background);
     box-shadow: inset -3px -3px 0px 0px var(--submit-btn-shadow);
