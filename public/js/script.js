@@ -1,5 +1,8 @@
 document.addEventListener("DOMContentLoaded", () => {
     // UI setup
+    const usernameInput = document.getElementById("username");
+    const submitUsernameButton = document.getElementById("submit-username");
+    const opponentUsernameElement = document.querySelector(".opponent-username");
     const countdownHeading = document.querySelector(".countdown")
     const gameStatusFeedback = document.querySelector(".game-status");
     const playerChoiceFeedback = document.querySelector(".player-choice");
@@ -27,6 +30,16 @@ document.addEventListener("DOMContentLoaded", () => {
         socket.emit("playerChoice", choice); // Send choice to server
         updateUI(gameStatusFeedback, "Waiting for opponent...");
     }
+
+    submitUsernameButton.addEventListener("click", () => {
+        const username = usernameInput.value.trim();
+        if (username) {
+            socket.emit("setUsername", username);
+            document.querySelectorAll('.buttons button').forEach(button => button.disabled = false);
+            submitUsernameButton.disabled = true;
+            usernameInput.disabled = true;
+        }
+    });
     
     function disableButtons(disable) {
         document.querySelectorAll('.buttons button').forEach(button => {
@@ -74,6 +87,10 @@ document.addEventListener("DOMContentLoaded", () => {
     document.getElementById("rock").addEventListener("click", () => playGame("rock"));
     document.getElementById("paper").addEventListener("click", () => playGame("paper"));
     document.getElementById("scissors").addEventListener("click", () => playGame("scissors"));
+
+    socket.on("opponentUsername", (username) => {
+        updateUI(opponentUsernameElement, `You're playing against: ${username}`);
+    });
 
 // Receive game result from server
 socket.on("gameResult", (data) => {
