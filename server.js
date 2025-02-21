@@ -70,7 +70,7 @@ io.on("connection", (socket) => {
 
             if (opponentId && players[opponentId]) {
                 // Notify opponent and give them 30 seconds to reconnect
-                io.to(opponentId).emit("opponentDisconnected", "Opponent disconnected. Waiting for reconnection...");
+                io.to(opponentId).emit("opponentDisconnected", "Opponent disconnected.");
 
                 // Store room info for potential reconnection
                 const roomInfo = {
