@@ -21,25 +21,33 @@ const players = {};
 let waitingPlayer = null;
 
 io.on("connection", (socket) => {
-    console.log(`New player connected:  ${socket.id}`);
+    console.log(`New player connected: ${socket.id}`);
 
-    if (!waitingPlayer) {
-        waitingPlayer = socket;
-        socket.emit("waiting", "Waiting for opponent...");
-    } else {
-        const player1 = waitingPlayer;
-        const player2 = socket;
-        const room = player1.id + "#" + player2.id;
+    socket.on("setUsername", (username) => {
+        socket.username = username;
 
-        player1.join(room);
-        player2.join(room);
+        if (!waitingPlayer) {
+            waitingPlayer = socket;
+            socket.emit("waiting", "Waiting for opponent...");
+        } else {
+            const player1 = waitingPlayer;
+            const player2 = socket;
+            const room = player1.id + "#" + player2.id;
 
-        players[player1.id] = {opponent: player2.id, choice: null, room};
-        players[player2.id] = {opponent: player1.id, choice: null, room};
+            player1.join(room);
+            player2.join(room);
 
-        io.to(room).emit("startGame", "Game starting! Make your choice!");
-        waitingPlayer = null;
-    }
+            players[player1.id] = { opponent: player2.id, choice: null, room, username: player1.username };
+            players[player2.id] = { opponent: player1.id, choice: null, room, username: player2.username };
+
+            io.to(room).emit("startGame", "Game starting! Make your choice!");
+
+            io.to(player1.id).emit("opponentUsername", player2.username);
+            io.to(player2.id).emit("opponentUsername", player1.username);
+
+            waitingPlayer = null;
+        }
+    });
 
     socket.on("playerChoice", (choice) => {
         if (players[socket.id]) {
