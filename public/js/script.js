@@ -38,6 +38,7 @@ document.addEventListener("DOMContentLoaded", () => {
             document.querySelectorAll('.buttons button').forEach(button => button.disabled = false);
             submitUsernameButton.disabled = true;
             usernameInput.disabled = true;
+            submitUsernameButton.style.display = 'none';
         }
     });
     
