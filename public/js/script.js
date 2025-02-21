@@ -1,4 +1,6 @@
 document.addEventListener("DOMContentLoaded", () => {
+    setButtonState(false);
+
     // UI setup
     const usernameInput = document.getElementById("username");
     const submitUsernameButton = document.getElementById("submit-username");
@@ -34,6 +36,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     function playGame(choice) {
         playerChoice = choice;
+        setButtonState(false);
         socket.emit("playerChoice", choice); // Send choice to server
     }
     
@@ -58,6 +61,7 @@ document.addEventListener("DOMContentLoaded", () => {
     
     socket.on("startGame", (message) => {
         updateUI(gameStatusFeedback, message);
+        setButtonState(true);
     });
     
     socket.on("waitingForChoice", (message) => {
@@ -67,10 +71,12 @@ document.addEventListener("DOMContentLoaded", () => {
     // Alert when opponent leaves the game.
     socket.on("opponentLeft", (message) => {
         updateUI(gameStatusFeedback, message);
+        setButtonState(false);
     });
 
     socket.on("opponentDisconnected", (message) => {
         updateUI(gameStatusFeedback, message);
+        setButtonState(false);
     });
 
     socket.on("opponentUsername", (username) => {
@@ -121,6 +127,7 @@ document.addEventListener("DOMContentLoaded", () => {
             } else {
                 clearInterval(countdownInterval);
                 updateUI(countdownHeading, message);
+                setButtonState(true);
             }
         }, 1000); // Update every second
     });
@@ -134,7 +141,6 @@ document.addEventListener("DOMContentLoaded", () => {
         const username = usernameInput.value.trim();
         if (username) {
             socket.emit("setUsername", username);
-            document.querySelectorAll('.buttons button').forEach(button => button.disabled = false);
             submitUsernameButton.disabled = true;
             usernameInput.disabled = true;
             submitUsernameButton.style.display = 'none';
