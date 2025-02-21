@@ -173,6 +173,13 @@ h1 {
     color: var(--score-color);
 }
 
+.username-input {
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
+    align-items: center;
+}
+
 #submit-username {
     position: relative;
     width: 10rem;
