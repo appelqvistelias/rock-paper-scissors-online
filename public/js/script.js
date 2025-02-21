@@ -100,6 +100,27 @@ socket.on("gameResult", (data) => {
     console.log("Player data:", playerData);
     updateUI(playerChoiceFeedback, "You chose: " + capitalizeFirstLetter(playerData.choice));
     updateUI(opponentChoiceFeedback, "Opponent chose: " + capitalizeFirstLetter(playerData.opponentChoice));
+
+    switch (playerData.result) {
+        case "You won!":
+            resultFeedback.classList.add("winner");
+            resultFeedback.classList.remove("draw");
+            resultFeedback.classList.remove("loser");
+            break;
+
+        case "You lost!":
+            resultFeedback.classList.add("loser");
+            resultFeedback.classList.remove("draw");
+            resultFeedback.classList.remove("winner");
+            break;
+
+        case "Draw!":
+            resultFeedback.classList.add("draw");
+            resultFeedback.classList.remove("winner");
+            resultFeedback.classList.remove("loser");
+            break;
+    }
+   
     updateUI(resultFeedback, playerData.result);
     updateScore(playerData.result);
 });
@@ -115,9 +136,8 @@ socket.on("gameResult", (data) => {
                 updateUI(countdownHeading, `New round starts in ${countdown} seconds...`);
             } else {
                 clearInterval(countdownInterval);
-                updateUI(resultFeedback, message);
+                updateUI(countdownHeading, message);
                 enableButtons();
-                countdownHeading.style.display = 'none'; // Hide the countdownHeading element
             }
         }, 1000); // Update every second
     });
