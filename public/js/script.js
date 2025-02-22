@@ -136,6 +136,11 @@ document.addEventListener("DOMContentLoaded", () => {
     document.getElementById("rock").addEventListener("click", () => playGame("rock"));
     document.getElementById("paper").addEventListener("click", () => playGame("paper"));
     document.getElementById("scissors").addEventListener("click", () => playGame("scissors"));
+
+    //Prevent username form from submitting and reloading the page
+    document.getElementById("username-form").addEventListener("submit", function(event) {
+        event.preventDefault(); 
+      });
     
     submitUsernameButton.addEventListener("click", () => {
         const username = usernameInput.value.trim();
