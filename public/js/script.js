@@ -38,7 +38,7 @@ document.addEventListener("DOMContentLoaded", () => {
         playerChoiceFeedback.textContent = "";
         opponentChoiceFeedback.textContent = "";
         resultFeedback.textContent = "";
-        opponentUsernameElement = "";
+        opponentUsernameElement.textContent = "";
     }
 
     function playGame(choice) {
