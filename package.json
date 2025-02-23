@@ -13,7 +13,8 @@
   "description": "Rock, Paper, Scissors ONLINE (RPSO) is an interactive web-based game that lets you challenge your friends (or rivals) 🤝 to a classic game of rock, paper, scissors. Play from the comfort of your home 🏠—or wherever you are—with just a web browser!",
   "dependencies": {
     "express": "^4.21.2",
-    "socket.io": "^4.8.1"
+    "socket.io": "^4.8.1",
+    "validator": "^13.12.0"
   },
   "repository": {
     "type": "git",
