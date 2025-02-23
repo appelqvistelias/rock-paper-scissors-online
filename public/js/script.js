@@ -68,12 +68,6 @@ document.addEventListener("DOMContentLoaded", () => {
         updateUI(gameStatusFeedback, message);
     });
 
-    // Alert when opponent leaves the game.
-    socket.on("opponentLeft", (message) => {
-        updateUI(gameStatusFeedback, message);
-        setButtonState(false);
-    });
-
     socket.on("opponentDisconnected", (message) => {
         updateUI(gameStatusFeedback, message);
         setButtonState(false);
