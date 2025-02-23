@@ -90,8 +90,13 @@ io.on("connection", (socket) => {
             const player2 = socket;
             const room = player1.id + "#" + player2.id;
 
-            player1.join(room);
-            player2.join(room);
+            try {
+                player1.join(room);
+                player2.join(room);
+            } catch (error) {
+                socket.emit("gameError", "Failed to join the game. Please try again.");
+                return;
+            }
 
             players[player1.id] = { opponent: player2.id, choice: null, room, username: player1.username };
             players[player2.id] = { opponent: player1.id, choice: null, room, username: player2.username };
@@ -136,6 +141,13 @@ io.on("connection", (socket) => {
             delete players[socket.id];
         }
     });
+
+    // Error handling
+    socket.on("error", (error) => {
+        console.error(`Socket error: ${error.message}`);
+        socket.emit("gameError", "An unexpected error occurred. Please try again.");
+    });
+
 });
 
 const PORT = process.env.PORT || 3000; // Use Render's dynamic port or fallback to 3000
