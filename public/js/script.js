@@ -65,6 +65,26 @@ document.addEventListener("DOMContentLoaded", () => {
     // const socket = io(); // Run server using localhost
     let playerChoice = null;
 
+    socket.on("gameError", (message) => {
+        updateUI(gameStatusFeedback, message);
+        submitUsernameButton.disabled = false;
+        usernameInput.disabled = false;
+        submitUsernameButton.style.display = 'inline-block';
+    });
+
+    socket.on("disconnect", () => {
+        updateUI(gameStatusFeedback, "Connection lost. Attempting to reconnect...");
+        setButtonState(false);
+    });
+
+    socket.on("connect_error", () => {
+        updateUI(gameStatusFeedback, "Failed to connect to server. Please check your connection.");
+    });
+
+    socket.on("connect", () => {
+        updateUI(gameStatusFeedback, "Connected to server. Enter your username to start.");
+    });
+
     socket.on("error", (message) => {
         updateUI(gameStatusFeedback, message);
 
