@@ -19,6 +19,8 @@ document.addEventListener("DOMContentLoaded", () => {
     let playerScore = 0;
     let opponentScore = 0;
 
+    let currentCountdownInterval = null;
+
     // Functions
     function capitalizeFirstLetter(str) {
         return str.charAt(0).toUpperCase() + str.slice(1);
@@ -35,6 +37,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     function clearUI() {
+        countdownHeading.textContent = "";
         playerChoiceFeedback.textContent = "";
         opponentChoiceFeedback.textContent = "";
         resultFeedback.textContent = "";
@@ -76,6 +79,11 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 
     socket.on("opponentDisconnected", (message) => {
+        if (currentCountdownInterval) {
+            clearInterval(currentCountdownInterval);
+            currentCountdownInterval = null;
+        }
+
         updateUI(gameStatusFeedback, message);
         setButtonState(false);
         clearUI();
@@ -119,13 +127,18 @@ document.addEventListener("DOMContentLoaded", () => {
         countdownHeading.style.display = 'block'; // Show the countdownHeading element
         updateUI(countdownHeading, `New round starts in ${countdown} seconds...`);
         updateUI(gameStatusFeedback, "");
+
+        if (currentCountdownInterval) {
+            clearInterval(currentCountdownInterval);
+        }
         
-        const countdownInterval = setInterval(() => {
+        currentCountdownInterval = setInterval(() => {
             countdown--;
             if (countdown > 0) {
                 updateUI(countdownHeading, `New round starts in ${countdown} seconds...`);
             } else {
-                clearInterval(countdownInterval);
+                clearInterval(currentCountdownInterval);
+                currentCountdownInterval = null;
                 updateUI(countdownHeading, message);
                 setButtonState(true);
             }
