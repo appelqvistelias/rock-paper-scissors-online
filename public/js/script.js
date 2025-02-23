@@ -19,6 +19,8 @@ document.addEventListener("DOMContentLoaded", () => {
     let playerScore = 0;
     let opponentScore = 0;
 
+    let currentCountdownInterval = null;
+
     // Functions
     function capitalizeFirstLetter(str) {
         return str.charAt(0).toUpperCase() + str.slice(1);
@@ -32,6 +34,14 @@ document.addEventListener("DOMContentLoaded", () => {
 
     function updateUI(element, message) {
         element.textContent = message;
+    }
+
+    function clearUI() {
+        countdownHeading.textContent = "";
+        playerChoiceFeedback.textContent = "";
+        opponentChoiceFeedback.textContent = "";
+        resultFeedback.textContent = "";
+        opponentUsernameElement.textContent = "";
     }
 
     function playGame(choice) {
@@ -51,7 +61,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     // socket.io
-    // const socket = io("https://your-app-name.onrender.com"); // Connect to WebSocket server
+    // const socket = io("https://rock-paper-scissors-online-9928.onrender.com"); // Connect to WebSocket server
     const socket = io(); // Run server using localhost
     let playerChoice = null;
     
@@ -68,15 +78,15 @@ document.addEventListener("DOMContentLoaded", () => {
         updateUI(gameStatusFeedback, message);
     });
 
-    // Alert when opponent leaves the game.
-    socket.on("opponentLeft", (message) => {
-        updateUI(gameStatusFeedback, message);
-        setButtonState(false);
-    });
-
     socket.on("opponentDisconnected", (message) => {
+        if (currentCountdownInterval) {
+            clearInterval(currentCountdownInterval);
+            currentCountdownInterval = null;
+        }
+
         updateUI(gameStatusFeedback, message);
         setButtonState(false);
+        clearUI();
     });
 
     socket.on("opponentUsername", (username) => {
@@ -94,20 +104,17 @@ document.addEventListener("DOMContentLoaded", () => {
         switch (playerData.result) {
             case "You won!":
                 resultFeedback.classList.add("winner");
-                resultFeedback.classList.remove("draw");
-                resultFeedback.classList.remove("loser");
+                resultFeedback.classList.remove("draw", "loser");
                 break;
 
             case "You lost!":
                 resultFeedback.classList.add("loser");
-                resultFeedback.classList.remove("draw");
-                resultFeedback.classList.remove("winner");
+                resultFeedback.classList.remove("draw", "winner");
                 break;
 
             case "Draw!":
                 resultFeedback.classList.add("draw");
-                resultFeedback.classList.remove("winner");
-                resultFeedback.classList.remove("loser");
+                resultFeedback.classList.remove("winner", "loser");
                 break;
         }
     
@@ -119,13 +126,19 @@ document.addEventListener("DOMContentLoaded", () => {
         let countdown = 5; // 5 seconds countdown
         countdownHeading.style.display = 'block'; // Show the countdownHeading element
         updateUI(countdownHeading, `New round starts in ${countdown} seconds...`);
+        updateUI(gameStatusFeedback, "");
+
+        if (currentCountdownInterval) {
+            clearInterval(currentCountdownInterval);
+        }
         
-        const countdownInterval = setInterval(() => {
+        currentCountdownInterval = setInterval(() => {
             countdown--;
             if (countdown > 0) {
                 updateUI(countdownHeading, `New round starts in ${countdown} seconds...`);
             } else {
-                clearInterval(countdownInterval);
+                clearInterval(currentCountdownInterval);
+                currentCountdownInterval = null;
                 updateUI(countdownHeading, message);
                 setButtonState(true);
             }
