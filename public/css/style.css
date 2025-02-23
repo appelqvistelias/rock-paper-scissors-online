@@ -256,7 +256,8 @@ h1 {
     }
 
     body {
-       background-image: none;
+        background-image: none;
+        background-color: var(--retro-black);
         padding: 1rem;
         align-items: flex-start;
         height: auto;
