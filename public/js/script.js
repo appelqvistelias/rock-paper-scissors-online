@@ -93,7 +93,6 @@ document.addEventListener("DOMContentLoaded", () => {
         updateUI(opponentUsernameElement, `You're playing against: ${username}`);
     });
 
-    // Receive game result from server
     socket.on("gameResult", (data) => {
         console.log("Received gameResult event:", data);
         const playerData = socket.id === data.player1.id ? data.player1 : data.player2;
