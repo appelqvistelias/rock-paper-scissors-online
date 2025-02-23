@@ -247,3 +247,114 @@ h1 {
     font-weight: bold;
     color: var(--winner-green);
 }
+
+/* Media queries */
+/* Small devices (phones, less than 600px) */
+@media (max-width: 600px) {
+    html {
+        font-size: 50%; 
+    }
+
+    body {
+        background-size: cover;
+        background-position: center;
+        padding: 1rem;
+        align-items: flex-start;
+        height: auto;
+    }
+
+    main {
+        width: 100%;
+        padding: 2rem;
+        border-width: 2px;
+    }
+
+    .container {
+        gap: 1.5rem;
+    }
+
+    h1 {
+        font-size: 2.4rem;
+    }
+
+    .subtitle {
+        font-size: 1.8rem;
+    }
+
+    #username {
+        width: 16rem;
+        font-size: 1.2rem;
+    }
+
+    .eight-bit-btn {
+        width: 12rem;
+        font-size: 1.2rem;
+    }
+
+    .buttons {
+        flex-direction: column;
+        gap: 1.5rem;
+    }
+
+    .scoreboard {
+        font-size: 1.4rem;
+    }
+}
+
+/* Medium devices (tablets, 600px to 900px) */
+@media (min-width: 600px) and (max-width: 900px) {
+    html {
+        font-size: 56.25%; 
+    }
+
+    body {
+        padding: 1.5rem;
+        height: auto;
+    }
+
+    main {
+        width: 90%;
+        padding: 3rem;
+    }
+
+    .container {
+        gap: 1.8rem;
+    }
+
+    h1 {
+        font-size: 3rem;
+    }
+
+    .subtitle {
+        font-size: 2rem;
+    }
+
+    #username {
+        width: 18rem;
+        font-size: 1.4rem;
+    }
+
+    .eight-bit-btn {
+        width: 13rem;
+        font-size: 1.4rem;
+    }
+
+    .buttons {
+        gap: 2rem;
+    }
+
+    .scoreboard {
+        font-size: 1.6rem;
+    }
+}
+
+/* Large devices (small laptops and larger) */
+@media (min-width: 900px) {
+    html {
+        font-size: 62.5%;
+    }
+
+    main {
+        width: 70%;
+    }
+}
