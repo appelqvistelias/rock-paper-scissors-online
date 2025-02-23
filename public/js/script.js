@@ -119,6 +119,7 @@ document.addEventListener("DOMContentLoaded", () => {
         let countdown = 5; // 5 seconds countdown
         countdownHeading.style.display = 'block'; // Show the countdownHeading element
         updateUI(countdownHeading, `New round starts in ${countdown} seconds...`);
+        updateUI(gameStatusFeedback, "");
         
         const countdownInterval = setInterval(() => {
             countdown--;
