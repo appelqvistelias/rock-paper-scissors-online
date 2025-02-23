@@ -61,9 +61,17 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     // socket.io
-    const socket = io("https://rock-paper-scissors-online-9928.onrender.com"); // Connect to WebSocket server
-    // const socket = io(); // Run server using localhost
+    // const socket = io("https://rock-paper-scissors-online-9928.onrender.com"); // Connect to WebSocket server
+    const socket = io(); // Run server using localhost
     let playerChoice = null;
+
+    socket.on("error", (message) => {
+        updateUI(gameStatusFeedback, message);
+
+        submitUsernameButton.disabled = false;
+        usernameInput.disabled = false;
+        submitUsernameButton.style.display = 'inline-block';
+    })
     
     socket.on("waiting", (message) => {
         updateUI(gameStatusFeedback, message);

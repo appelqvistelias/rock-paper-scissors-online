@@ -3,6 +3,7 @@ import { createServer } from "http"; // Required for Socket.io compatibility
 import { Server } from "socket.io"; // Enables real-time communication for the game
 import path from "path";
 import { fileURLToPath } from "url"; // Converts import.meta.url to a file path
+import validator from 'validator';
 
 // Creating a functional __dirname
 const __filename = fileURLToPath(import.meta.url);
@@ -73,7 +74,13 @@ io.on("connection", (socket) => {
     console.log(`New player connected: ${socket.id}`);
 
     socket.on("setUsername", (username) => {
-        socket.username = username;
+        const sanitizedUsername = validator.escape(username.trim());
+        if (!/^[a-zA-Z0-9_]+$/.test(sanitizedUsername)) {
+            socket.emit("error", "Invalid username! Only alphanumeric characters and underscores are allowed.");
+            return;
+        }
+        
+        socket.username = sanitizedUsername;
 
         if (!waitingPlayer) {
             waitingPlayer = socket;
@@ -99,6 +106,11 @@ io.on("connection", (socket) => {
     });
 
     socket.on("playerChoice", (choice) => {
+        if (!["rock", "paper", "scissors"].includes(choice)) {
+            socket.emit("error", "Invalid choice. Please choose rock, paper, or scissors.");
+            return;
+        }
+        
         if (players[socket.id]) {
             players[socket.id].choice = choice;
             checkGameResult(socket);
