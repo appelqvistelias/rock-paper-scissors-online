@@ -81,10 +81,6 @@ document.addEventListener("DOMContentLoaded", () => {
         updateUI(gameStatusFeedback, "Failed to connect to server. Please check your connection.");
     });
 
-    socket.on("connect", () => {
-        updateUI(gameStatusFeedback, "Connected to server. Enter your username to start.");
-    });
-
     socket.on("error", (message) => {
         updateUI(gameStatusFeedback, message);
 
