@@ -256,8 +256,7 @@ h1 {
     }
 
     body {
-        background-size: cover;
-        background-position: center;
+       background-image: none;
         padding: 1rem;
         align-items: flex-start;
         height: auto;
