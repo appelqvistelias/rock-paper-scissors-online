@@ -88,20 +88,17 @@ document.addEventListener("DOMContentLoaded", () => {
         switch (playerData.result) {
             case "You won!":
                 resultFeedback.classList.add("winner");
-                resultFeedback.classList.remove("draw");
-                resultFeedback.classList.remove("loser");
+                resultFeedback.classList.remove("draw", "loser");
                 break;
 
             case "You lost!":
                 resultFeedback.classList.add("loser");
-                resultFeedback.classList.remove("draw");
-                resultFeedback.classList.remove("winner");
+                resultFeedback.classList.remove("draw", "winner");
                 break;
 
             case "Draw!":
                 resultFeedback.classList.add("draw");
-                resultFeedback.classList.remove("winner");
-                resultFeedback.classList.remove("loser");
+                resultFeedback.classList.remove("winner", "loser");
                 break;
         }
     
