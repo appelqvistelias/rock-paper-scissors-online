@@ -34,6 +34,13 @@ document.addEventListener("DOMContentLoaded", () => {
         element.textContent = message;
     }
 
+    function clearUI() {
+        playerChoiceFeedback.textContent = "";
+        opponentChoiceFeedback.textContent = "";
+        resultFeedback.textContent = "";
+        opponentUsernameElement = "";
+    }
+
     function playGame(choice) {
         playerChoice = choice;
         setButtonState(false);
@@ -71,6 +78,7 @@ document.addEventListener("DOMContentLoaded", () => {
     socket.on("opponentDisconnected", (message) => {
         updateUI(gameStatusFeedback, message);
         setButtonState(false);
+        clearUI();
     });
 
     socket.on("opponentUsername", (username) => {
