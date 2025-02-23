@@ -16,7 +16,56 @@ const io = new Server(server); // Connecting Socket.io to the server
 // Serving static files from the "public" folder
 app.use(express.static(path.join(__dirname, "public")));
 
-// Pairing players
+// Functions
+function determineWinner(playerChoice, opponentChoice) {
+    if (playerChoice === opponentChoice) {
+         return "Draw!";
+    }
+ 
+    if (
+         (playerChoice === "rock" && opponentChoice === "scissors") ||
+         (playerChoice === "paper" && opponentChoice === "rock") ||
+         (playerChoice === "scissors" && opponentChoice === "paper")
+     ) {
+         return "You won!"; 
+     } else {
+         return "You lost!";
+     }
+ }
+
+function checkGameResult(socket) {
+    const player = players[socket.id];
+    if (!player) return;
+
+    const opponent = players[player.opponent];
+    if (!opponent) return;
+
+    if (player.choice && opponent.choice) {
+        io.to(player.room).emit("gameResult", {
+            player1: {
+                id: socket.id,
+                choice: player.choice,
+                opponentChoice: opponent.choice,
+                result: determineWinner(player.choice, opponent.choice)
+            },
+            player2: {
+                id: player.opponent,
+                choice: opponent.choice,
+                opponentChoice: player.choice,
+                result: determineWinner(opponent.choice, player.choice)
+            }
+        });
+
+        player.choice = null;
+        opponent.choice = null;
+
+        io.to(player.room).emit("roundComplete", "Round complete! Choose again for the next round.");
+    } else {
+        socket.emit("waitingForChoice", "Waiting for opponent to choose...");
+    }
+}
+
+// Pairing players and game logic
 const players = {};
 let waitingPlayer = null;
 
@@ -76,54 +125,6 @@ io.on("connection", (socket) => {
         }
     });
 });
-
-function checkGameResult(socket) {
-    const player = players[socket.id];
-    if (!player) return;
-
-    const opponent = players[player.opponent];
-    if (!opponent) return;
-
-    if (player.choice && opponent.choice) {
-        io.to(player.room).emit("gameResult", {
-            player1: {
-                id: socket.id,
-                choice: player.choice,
-                opponentChoice: opponent.choice,
-                result: determineWinner(player.choice, opponent.choice)
-            },
-            player2: {
-                id: player.opponent,
-                choice: opponent.choice,
-                opponentChoice: player.choice,
-                result: determineWinner(opponent.choice, player.choice)
-            }
-        });
-
-        player.choice = null;
-        opponent.choice = null;
-
-        io.to(player.room).emit("roundComplete", "Round complete! Choose again for the next round.");
-    } else {
-        socket.emit("waitingForChoice", "Waiting for opponent to choose...");
-    }
-}
-
-function determineWinner(playerChoice, opponentChoice) {
-   if (playerChoice === opponentChoice) {
-        return "Draw!";
-   }
-
-   if (
-        (playerChoice === "rock" && opponentChoice === "scissors") ||
-        (playerChoice === "paper" && opponentChoice === "rock") ||
-        (playerChoice === "scissors" && opponentChoice === "paper")
-    ) {
-        return "You won!"; 
-    } else {
-        return "You lost!";
-    }
-}
 
 const PORT = process.env.PORT || 3000; // Use Render's dynamic port or fallback to 3000
 server.listen(PORT, () => {
