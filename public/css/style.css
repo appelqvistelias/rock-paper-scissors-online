@@ -347,14 +347,3 @@ h1 {
         font-size: 1.6rem;
     }
 }
-
-/* Large devices (small laptops and larger) */
-@media (min-width: 900px) {
-    html {
-        font-size: 62.5%;
-    }
-
-    main {
-        width: 70%;
-    }
-}
